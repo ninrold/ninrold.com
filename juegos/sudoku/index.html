@@ -230,7 +230,7 @@ body{
   .num{height:54px;font-size:27px}
   .new{height:56px;font-size:17px}
 }
-</style>
+.feedback{position:fixed;inset:0;z-index:8;display:grid;place-items:center;background:rgba(17,17,17,.7);opacity:0;visibility:hidden;transition:.25s}.feedback.show{opacity:1;visibility:visible}.feedback-card{min-width:min(330px,calc(100vw - 40px));padding:36px 28px;background:#f7f5f0;border:7px solid var(--blue);text-align:center;color:var(--ink);transform:scale(.65) rotate(-4deg);transition:.35s}.feedback.show .feedback-card{transform:scale(1) rotate(0)}.feedback.win .feedback-card{animation:celebrate .7s ease 2}.feedback.lose .feedback-card{border-color:#111;animation:shake .45s linear 2}.feedback h2{margin:0;font-size:clamp(29px,7vw,48px);letter-spacing:-.06em}.feedback p{margin:10px 0 0;color:var(--muted)}.feedback button{margin-top:22px;background:var(--blue);color:#fff;border:0;padding:11px 18px;font-weight:700;cursor:pointer}@keyframes celebrate{50%{transform:scale(1.08) rotate(2deg);box-shadow:0 0 0 13px rgba(217,37,37,.2)}}@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}</style>
 </head>
 <body>
 <div class="topline"></div>
@@ -273,7 +273,7 @@ body{
   </section>
 </main>
 
-<div id="paused" class="paused">Pausa</div>
+<div id="paused" class="paused">Pausa</div><div id="feedback" class="feedback" role="dialog" aria-modal="true"><div class="feedback-card"><h2 id="feedbackTitle"></h2><p id="feedbackText"></p><button id="feedbackButton">Nueva partida</button></div></div>
 
 <script>
 const LEVELS = {
@@ -435,6 +435,7 @@ function setNumber(n){
     if(errors>=3){
       messageEl.textContent="Tres errores. Partida terminada.";
       clearInterval(timerId);
+      showFeedback("lose","PARTIDA TERMINADA","Tres errores. Inténtalo de nuevo.");
     }
   }else{
     messageEl.textContent="";
@@ -459,6 +460,8 @@ function undo(){
   render();
   messageEl.textContent="";
 }
+function showFeedback(kind,title,text){const box=document.getElementById("feedback");box.className="feedback show "+kind;document.getElementById("feedbackTitle").textContent=title;document.getElementById("feedbackText").textContent=text;}
+document.getElementById("feedbackButton").addEventListener("click",()=>{document.getElementById("feedback").className="feedback";newGame()});
 function checkWin(){
   for(let r=0;r<9;r++) for(let c=0;c<9;c++)
     if(grid[r][c]!==solution[r][c]) return;
@@ -466,6 +469,7 @@ function checkWin(){
   messageEl.className="message success";
   clearInterval(timerId);
   document.getElementById("score").textContent="✓";
+  showFeedback("win","¡COMPLETADO!","El tablero está resuelto.");
 }
 function hint(){
   if(hints<=0 || selected<0 || paused) return;
