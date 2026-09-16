@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"> 
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku — Ninrold</title>
+<style>
+:root{
+  --blue:#3564b8;
+  --blue-2:#5d7fc4;
+  --ink:#334a68;
+  --muted:#718096;
+  --line:#c4cfdd;
+  --strong:#344b68;
+  --soft:#edf2f8;
+  --selected:#c9e5fb;
+  --related:#e7eef7;
+  --white:#fff;
+  --danger:#d94b4b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:#fff;
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+}
+.topline{
+  height:7px;
+  border-top:1px solid #dbe2eb;
+  position:relative;
+}
+.topline:after{
+  content:"";
+  position:absolute;
+  top:-1px; left:28%;
+  width:64px; height:2px;
+  background:var(--blue);
+}
+.app{
+  width:min(1030px,calc(100vw - 34px));
+  margin:25px auto 34px;
+}
+.difficulty{
+  display:flex;
+  align-items:center;
+  gap:25px;
+  margin:0 0 24px;
+  font-weight:700;
+  color:var(--muted);
+}
+.difficulty .label{margin-right:2px}
+.diff{
+  border:0;
+  background:transparent;
+  padding:0;
+  font:inherit;
+  color:var(--muted);
+  cursor:pointer;
+}
+.diff.active{color:var(--blue)}
+.game{
+  display:grid;
+  grid-template-columns:minmax(520px,625px) 1fr;
+  gap:25px;
+  align-items:start;
+}
+.board-wrap{width:100%}
+.board{
+  width:100%;
+  aspect-ratio:1;
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  grid-template-rows:repeat(9,1fr);
+  border:2px solid var(--strong);
+  background:var(--strong);
+}
+.cell{
+  position:relative;
+  background:#fff;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.cell:nth-child(3n){border-right:2px solid var(--strong)}
+.cell:nth-child(9n){border-right:0}
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54){border-bottom:2px solid var(--strong)}
+.cell:nth-child(n+73){border-bottom:0}
+.cell.related{background:var(--related)}
+.cell.selected{background:var(--selected)}
+.cell.fixed{background:#e5edf6;font-weight:400}
+.cell.error{background:#ffe4e4}
+.value{
+  font-size:clamp(28px,4.1vw,45px);
+  line-height:1;
+  color:var(--ink);
+  user-select:none;
+}
+.fixed .value{font-weight:500}
+.notes{
+  position:absolute;
+  inset:4px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  font-size:clamp(9px,1.1vw,13px);
+  color:#63758d;
+  pointer-events:none;
+}
+.note{display:flex;align-items:center;justify-content:center}
+.side{min-width:0}
+.score{
+  text-align:center;
+  font-size:29px;
+  font-weight:700;
+  margin:-52px 0 25px;
+}
+.stats{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:25px;
+  font-weight:700;
+  color:var(--muted);
+  font-size:17px;
+}
+.stats strong{display:block;font-size:18px;color:var(--muted);margin-top:3px}
+.tools{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:15px;
+}
+.tool{
+  height:74px;
+  border:0;
+  border-radius:50%;
+  background:#edf2f8;
+  color:var(--blue);
+  cursor:pointer;
+  font-size:29px;
+  position:relative;
+}
+.tool:hover{background:#e3ebf5}
+.tool.active{outline:3px solid #cbdcf4}
+.badge{
+  position:absolute;
+  right:-2px; top:-3px;
+  min-width:30px;height:30px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;
+}
+.badge.off{background:#aeb8c6;color:#fff}
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.num{
+  height:76px;
+  border:0;
+  border-radius:5px;
+  background:#e9eef5;
+  color:var(--blue);
+  font-size:34px;
+  cursor:pointer;
+}
+.num:hover{background:#dde6f1}
+.new{
+  width:100%;
+  margin-top:10px;
+  height:74px;
+  border:0;
+  border-radius:5px;
+  background:var(--blue-2);
+  color:#fff;
+  font-size:20px;
+  font-weight:700;
+  cursor:pointer;
+}
+.new:hover{background:var(--blue)}
+.message{
+  min-height:22px;
+  text-align:center;
+  margin-top:11px;
+  font-size:14px;
+  font-weight:700;
+}
+.message.error{color:var(--danger)}
+.message.success{color:#3b8a59}
+.paused{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.84);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:5;
+  font-size:28px;
+  font-weight:700;
+}
+.paused.show{display:flex}
+@media(max-width:800px){
+  .app{width:min(620px,calc(100vw - 20px));margin-top:18px}
+  .difficulty{gap:13px;overflow-x:auto;white-space:nowrap;padding-bottom:4px}
+  .game{grid-template-columns:1fr;gap:18px}
+  .score{margin:0 0 15px}
+  .stats{margin-bottom:14px}
+  .tool{height:62px}
+  .num{height:60px}
+  .new{height:62px}
+}
+@media(max-width:520px){
+  .difficulty{font-size:13px}
+  .difficulty .label{display:none}
+  .game{gap:12px}
+  .value{font-size:clamp(22px,7.5vw,35px)}
+  .tools{gap:8px}
+  .tool{height:54px;font-size:23px}
+  .num{height:54px;font-size:27px}
+  .new{height:56px;font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+
+<main class="app">
+  <nav class="difficulty" aria-label="Dificultad">
+    <span class="label">Dificultad:</span>
+    <button class="diff active" data-level="facil">Fácil</button>
+    <button class="diff" data-level="media">Media</button>
+    <button class="diff" data-level="dificil">Difícil</button>
+    <button class="diff" data-level="experto">Experto</button>
+    <button class="diff" data-level="maestra">Maestra</button>
+    <button class="diff" data-level="extrema">Extrema</button>
+  </nav>
+
+  <section class="game">
+    <div class="board-wrap">
+      <div id="board" class="board" aria-label="Tablero de Sudoku"></div>
+    </div>
+
+    <aside class="side">
+      <div id="score" class="score">0</div>
+
+      <div class="stats">
+        <div>Errores<strong id="errors">0/3</strong></div>
+        <div>Tiempo<strong id="time">00:00</strong></div>
+      </div>
+
+      <div class="tools">
+        <button class="tool" id="undo" title="Deshacer" aria-label="Deshacer">↶</button>
+        <button class="tool" id="erase" title="Borrar" aria-label="Borrar">⌫</button>
+        <button class="tool" id="notes" title="Notas" aria-label="Notas">✎<span id="notesBadge" class="badge off">OFF</span></button>
+        <button class="tool" id="hint" title="Pista" aria-label="Pista">💡<span class="badge">3</span></button>
+      </div>
+
+      <div id="keypad" class="keypad"></div>
+      <button id="newGame" class="new">Nueva partida</button>
+      <div id="message" class="message"></div>
+    </aside>
+  </section>
+</main>
+
+<div id="paused" class="paused">Pausa</div>
+
+<script>
+const LEVELS = {
+  facil:   {name:"Fácil",   clues:43},
+  media:   {name:"Media",   clues:38},
+  dificil: {name:"Difícil", clues:33},
+  experto: {name:"Experto", clues:29},
+  maestra: {name:"Maestra", clues:25},
+  extrema: {name:"Extrema", clues:22}
+};
+
+let solution, puzzle, grid, selected=-1;
+let difficulty="facil";
+let errors=0, hints=3, notesMode=false, paused=false, elapsed=0;
+let timerId=null, history=[];
+
+const boardEl=document.getElementById("board");
+const keypadEl=document.getElementById("keypad");
+const messageEl=document.getElementById("message");
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function emptyGrid(){return Array.from({length:9},()=>Array(9).fill(0))}
+function valid(b,r,c,n){
+  for(let i=0;i<9;i++) if(b[r][i]===n || b[i][c]===n) return false;
+  const br=Math.floor(r/3)*3, bc=Math.floor(c/3)*3;
+  for(let rr=br;rr<br+3;rr++) for(let cc=bc;cc<bc+3;cc++)
+    if(b[rr][cc]===n) return false;
+  return true;
+}
+function solve(b){
+  let best=null, candidates=null;
+  for(let r=0;r<9;r++) for(let c=0;c<9;c++) if(b[r][c]===0){
+    const opts=[];
+    for(let n=1;n<=9;n++) if(valid(b,r,c,n)) opts.push(n);
+    if(!opts.length) return false;
+    if(candidates===null || opts.length<candidates.length){
+      best=[r,c]; candidates=opts;
+      if(opts.length===1) break;
+    }
+  }
+  if(!best) return true;
+  const [r,c]=best;
+  shuffle(candidates);
+  for(const n of candidates){
+    b[r][c]=n;
+    if(solve(b)) return true;
+  }
+  b[r][c]=0;
+  return false;
+}
+function countSolutions(b, limit=2){
+  let count=0, best=null, optsBest=null;
+  for(let r=0;r<9;r++) for(let c=0;c<9;c++) if(b[r][c]===0){
+    const opts=[];
+    for(let n=1;n<=9;n++) if(valid(b,r,c,n)) opts.push(n);
+    if(!opts.length) return 0;
+    if(!optsBest || opts.length<optsBest.length){best=[r,c];optsBest=opts}
+  }
+  if(!best) return 1;
+  const [r,c]=best;
+  for(const n of optsBest){
+    b[r][c]=n;
+    count += countSolutions(b,limit);
+    b[r][c]=0;
+    if(count>=limit) return count;
+  }
+  return count;
+}
+function generate(){
+  solution=emptyGrid();
+  solve(solution);
+  puzzle=solution.map(r=>[...r]);
+
+  const target=LEVELS[difficulty].clues;
+  const positions=shuffle([...Array(81).keys()]);
+  let clues=81;
+
+  for(const idx of positions){
+    if(clues<=target) break;
+    const r=Math.floor(idx/9), c=idx%9;
+    const old=puzzle[r][c];
+    puzzle[r][c]=0;
+    const test=puzzle.map(row=>[...row]);
+    if(countSolutions(test,2)!==1) puzzle[r][c]=old;
+    else clues--;
+  }
+  grid=puzzle.map(r=>[...r]);
+}
+function render(){
+  boardEl.innerHTML="";
+  for(let i=0;i<81;i++){
+    const r=Math.floor(i/9), c=i%9;
+    const cell=document.createElement("div");
+    cell.className="cell";
+    if(puzzle[r][c]) cell.classList.add("fixed");
+    if(selected===i) cell.classList.add("selected");
+    if(selected>=0){
+      const sr=Math.floor(selected/9), sc=selected%9;
+      if(r===sr || c===sc || (Math.floor(r/3)===Math.floor(sr/3)&&Math.floor(c/3)===Math.floor(sc/3)))
+        cell.classList.add("related");
+      if(grid[r][c] && grid[r][c]===grid[sr][sc]) cell.classList.add("selected");
+    }
+    if(grid[r][c] && puzzle[r][c]===0 && grid[r][c]!==solution[r][c]) cell.classList.add("error");
+
+    const value=document.createElement("div");
+    value.className="value";
+    value.textContent=grid[r][c]||"";
+    cell.appendChild(value);
+
+    const notes=document.createElement("div");
+    notes.className="notes";
+    const ns=grid.notes?.[r]?.[c] || [];
+    for(let n=1;n<=9;n++){
+      const note=document.createElement("span");
+      note.className="note";
+      note.textContent=ns.includes(n)?n:"";
+      notes.appendChild(note);
+    }
+    if(ns.length) cell.appendChild(notes);
+
+    cell.addEventListener("click",()=>select(i));
+    boardEl.appendChild(cell);
+  }
+}
+function select(i){
+  if(puzzle[Math.floor(i/9)][i%9]) return;
+  selected=i;
+  render();
+}
+function setNumber(n){
+  if(selected<0 || paused) return;
+  const r=Math.floor(selected/9), c=selected%9;
+  if(puzzle[r][c]) return;
+
+  if(notesMode){
+    grid.notes ??= Array.from({length:9},()=>Array.from({length:9},()=>[]));
+    const arr=grid.notes[r][c];
+    const pos=arr.indexOf(n);
+    if(pos>=0) arr.splice(pos,1); else arr.push(n);
+    arr.sort();
+    render();
+    return;
+  }
+
+  const old=grid[r][c];
+  history.push({i:selected,old});
+  grid[r][c]=n;
+
+  if(n!==solution[r][c]){
+    errors++;
+    messageEl.textContent="Número incorrecto.";
+    messageEl.className="message error";
+    if(errors>=3){
+      messageEl.textContent="Tres errores. Partida terminada.";
+      clearInterval(timerId);
+    }
+  }else{
+    messageEl.textContent="";
+    messageEl.className="message";
+    checkWin();
+  }
+  render();
+  updateStats();
+}
+function erase(){
+  if(selected<0 || paused) return;
+  const r=Math.floor(selected/9), c=selected%9;
+  if(puzzle[r][c]) return;
+  history.push({i:selected,old:grid[r][c]});
+  grid[r][c]=0;
+  render();
+}
+function undo(){
+  if(!history.length || paused) return;
+  const h=history.pop(), r=Math.floor(h.i/9), c=h.i%9;
+  grid[r][c]=h.old;
+  render();
+  messageEl.textContent="";
+}
+function checkWin(){
+  for(let r=0;r<9;r++) for(let c=0;c<9;c++)
+    if(grid[r][c]!==solution[r][c]) return;
+  messageEl.textContent="¡Sudoku completado!";
+  messageEl.className="message success";
+  clearInterval(timerId);
+  document.getElementById("score").textContent="✓";
+}
+function hint(){
+  if(hints<=0 || selected<0 || paused) return;
+  const r=Math.floor(selected/9), c=selected%9;
+  if(puzzle[r][c] || grid[r][c]===solution[r][c]) return;
+  history.push({i:selected,old:grid[r][c]});
+  grid[r][c]=solution[r][c];
+  hints--;
+  document.querySelector("#hint .badge").textContent=hints;
+  render();
+  checkWin();
+}
+function updateStats(){
+  document.getElementById("errors").textContent=errors+"/3";
+  const m=String(Math.floor(elapsed/60)).padStart(2,"0");
+  const s=String(elapsed%60).padStart(2,"0");
+  document.getElementById("time").textContent=m+":"+s;
+}
+function startTimer(){
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(!paused){elapsed++;updateStats()}
+  },1000);
+}
+function newGame(){
+  selected=-1; errors=0; hints=3; elapsed=0; history=[]; paused=false;
+  notesMode=false;
+  document.getElementById("notesBadge").textContent="OFF";
+  document.getElementById("notesBadge").classList.add("off");
+  document.getElementById("hint .badge")?.remove();
+  const hintBtn=document.getElementById("hint");
+  if(!hintBtn.querySelector(".badge")){
+    const b=document.createElement("span");b.className="badge";b.textContent="3";hintBtn.appendChild(b);
+  }
+  document.getElementById("score").textContent="0";
+  messageEl.textContent="";
+  messageEl.className="message";
+  generate();
+  grid.notes=Array.from({length:9},()=>Array.from({length:9},()=>[]));
+  render(); updateStats(); startTimer();
+}
+function toggleNotes(){
+  notesMode=!notesMode;
+  const b=document.getElementById("notesBadge");
+  b.textContent=notesMode?"ON":"OFF";
+  b.classList.toggle("off",!notesMode);
+  document.getElementById("notes").classList.toggle("active",notesMode);
+}
+function togglePause(){
+  paused=!paused;
+  document.getElementById("paused").classList.toggle("show",paused);
+}
+for(let n=1;n<=9;n++){
+  const b=document.createElement("button");
+  b.className="num"; b.textContent=n;
+  b.addEventListener("click",()=>setNumber(n));
+  keypadEl.appendChild(b);
+}
+document.getElementById("undo").addEventListener("click",undo);
+document.getElementById("erase").addEventListener("click",erase);
+document.getElementById("notes").addEventListener("click",toggleNotes);
+document.getElementById("hint").addEventListener("click",hint);
+document.getElementById("newGame").addEventListener("click",newGame);
+
+document.querySelectorAll(".diff").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    difficulty=btn.dataset.level;
+    document.querySelectorAll(".diff").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    newGame();
+  });
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key>="1"&&e.key<="9") setNumber(Number(e.key));
+  if(e.key==="Backspace"||e.key==="Delete") erase();
+  if(e.key===" "){e.preventDefault();togglePause()}
+});
+
+newGame();
+</script>
+</body>
+</html>
