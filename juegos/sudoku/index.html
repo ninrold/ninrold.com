@@ -7,17 +7,17 @@
 <title>Sudoku — Ninrold</title>
 <style>
 :root{
-  --blue:#3564b8;
-  --blue-2:#5d7fc4;
-  --ink:#334a68;
-  --muted:#718096;
-  --line:#c4cfdd;
-  --strong:#344b68;
-  --soft:#edf2f8;
-  --selected:#c9e5fb;
-  --related:#e7eef7;
+  --blue:#d92525;
+  --blue-2:#b71919;
+  --ink:#111;
+  --muted:#68645f;
+  --line:#d9d5cd;
+  --strong:#111;
+  --soft:#f7f5f0;
+  --selected:#ffe0df;
+  --related:#f4e8e4;
   --white:#fff;
-  --danger:#d94b4b;
+  --danger:#d92525;
 }
 *{box-sizing:border-box}
 body{
@@ -29,7 +29,7 @@ body{
 }
 .topline{
   height:7px;
-  border-top:1px solid #dbe2eb;
+  border-top:1px solid #e2ddd5;
   position:relative;
 }
 .topline:after{
@@ -43,7 +43,7 @@ body{
   width:min(1030px,calc(100vw - 34px));
   margin:25px auto 34px;
 }
-.difficulty{
+.sudoku-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;margin-bottom:22px;border-bottom:1px solid var(--strong);font-size:12px;font-weight:700;letter-spacing:.08em}.sudoku-head a{color:var(--ink);text-decoration:none}.sudoku-head i{display:inline-block;width:18px;height:18px;background:var(--blue);vertical-align:middle;margin-right:7px;position:relative}.sudoku-head i:after{content:"";position:absolute;left:4px;top:5px;width:10px;height:7px;border:1.5px solid #fff;border-bottom:0}.difficulty{
   display:flex;
   align-items:center;
   gap:25px;
@@ -94,8 +94,8 @@ body{
 .cell:nth-child(n+73){border-bottom:0}
 .cell.related{background:var(--related)}
 .cell.selected{background:var(--selected)}
-.cell.fixed{background:#e5edf6;font-weight:400}
-.cell.error{background:#ffe4e4}
+.cell.fixed{background:#f0eae5;font-weight:400}
+.cell.error{background:#ffe0df}
 .value{
   font-size:clamp(28px,4.1vw,45px);
   line-height:1;
@@ -110,7 +110,7 @@ body{
   grid-template-columns:repeat(3,1fr);
   grid-template-rows:repeat(3,1fr);
   font-size:clamp(9px,1.1vw,13px);
-  color:#63758d;
+  color:#68645f;
   pointer-events:none;
 }
 .note{display:flex;align-items:center;justify-content:center}
@@ -141,14 +141,14 @@ body{
   height:74px;
   border:0;
   border-radius:50%;
-  background:#edf2f8;
+  background:#f0ebe5;
   color:var(--blue);
   cursor:pointer;
   font-size:29px;
   position:relative;
 }
-.tool:hover{background:#e3ebf5}
-.tool.active{outline:3px solid #cbdcf4}
+.tool:hover{background:#e8ded8}
+.tool.active{outline:3px solid #f1b5b2}
 .badge{
   position:absolute;
   right:-2px; top:-3px;
@@ -170,12 +170,12 @@ body{
   height:76px;
   border:0;
   border-radius:5px;
-  background:#e9eef5;
+  background:#f0ebe5;
   color:var(--blue);
   font-size:34px;
   cursor:pointer;
 }
-.num:hover{background:#dde6f1}
+.num:hover{background:#e8ded8}
 .new{
   width:100%;
   margin-top:10px;
@@ -197,7 +197,7 @@ body{
   font-weight:700;
 }
 .message.error{color:var(--danger)}
-.message.success{color:#3b8a59}
+.message.success{color:#39734b}
 .paused{
   position:fixed;
   inset:0;
@@ -235,7 +235,7 @@ body{
 <body>
 <div class="topline"></div>
 
-<main class="app">
+<main class="app"><header class="sudoku-head"><a href="../../" aria-label="Volver a Ninrold"><i></i>NINROLD</a><span>JUEGOS · SUDOKU</span></header>
   <nav class="difficulty" aria-label="Dificultad">
     <span class="label">Dificultad:</span>
     <button class="diff active" data-level="facil">Fácil</button>
