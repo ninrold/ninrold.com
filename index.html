@@ -1,14 +1,511 @@
 <!doctype html>
 <html lang="es">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Arquitectura y Derecho: espacios independientes de estudio y recursos.">
-<title>Ninrold</title>
-<style>
-:root{--red:#d92525;--ink:#111;--paper:#f7f5f0;--line:#d9d5cd;--muted:#68645f}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}.shell{min-height:100svh;padding:24px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink);padding-bottom:17px}.brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.08em;font-size:13px;text-transform:uppercase}.mark{width:28px;height:28px;background:var(--red);display:inline-block;position:relative;overflow:hidden}.mark:before{content:"";position:absolute;left:6px;right:6px;bottom:5px;height:13px;border:2px solid #fff;border-bottom:0}.mark:after{content:"";position:absolute;left:7px;top:9px;width:16px;height:2px;background:#fff;transform:rotate(14deg);transform-origin:left center}.top small{color:var(--muted);letter-spacing:.04em}.main{width:min(1180px,100%);margin:auto;display:grid;grid-template-columns:1fr 210px;gap:clamp(28px,7vw,100px);align-items:center;padding:50px 0}.intro{font-size:clamp(14px,1.25vw,17px);max-width:420px;line-height:1.55;color:var(--muted);margin:0 0 38px}.paths{display:grid;gap:14px}.path{position:relative;min-height:clamp(150px,20vw,235px);padding:20px 24px;display:flex;align-items:flex-end;overflow:hidden;text-decoration:none;color:var(--ink);border:1px solid var(--ink);transition:background .2s,color .2s,transform .2s}.path:hover,.path:focus-visible{background:var(--ink);color:var(--paper);transform:translateY(-3px);outline:none}.path h1{font-size:clamp(30px,6vw,76px);letter-spacing:-.09em;margin:0;line-height:.8;font-weight:800}.path span{position:absolute;right:20px;top:19px;font-size:13px;letter-spacing:.08em;text-transform:uppercase}.architecture:before{content:"";position:absolute;width:38%;aspect-ratio:1;background:var(--red);right:8%;top:-32%;border-radius:50%;opacity:.96}.law:before{content:"";position:absolute;width:29%;height:75%;border:9px solid var(--red);right:12%;top:18%}.games{align-self:stretch;display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line);padding-left:24px}.games h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 15px;color:var(--muted)}.games a{display:block;padding:10px 0;color:var(--ink);text-decoration:none;border-top:1px solid var(--line);font-size:14px}.games a:hover{color:var(--red)}.games a:last-child{border-bottom:1px solid var(--line)}.soon{font-size:11px;color:var(--muted);display:block;margin-top:2px}.footer{display:flex;justify-content:space-between;border-top:1px solid var(--ink);padding-top:16px;color:var(--muted);font-size:12px}@media(max-width:700px){.shell{padding:17px}.top small{display:none}.main{grid-template-columns:1fr;padding:42px 0 28px}.games{border-left:0;border-top:1px solid var(--line);padding:18px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.games h2{grid-column:1/-1;margin:0}.games a{border-bottom:1px solid var(--line);font-size:13px}.path{min-height:145px}.footer{font-size:10px}}
-</style></head>
-<body><div class="shell">
-<header class="top"><a class="brand" href="/" aria-label="Inicio Ninrold"><i class="mark"></i>Ninrold</a><small>Dos espacios de estudio independientes</small></header>
-<main class="main"><section><p class="intro">Explora dos territorios distintos: una colección en crecimiento de proyectos, herramientas y materiales para aprender.</p><nav class="paths" aria-label="Secciones principales"><a class="path architecture" href="arquitectura/"><span>01 · Explorar</span><h1>ARQUITECTURA</h1></a><a class="path law" href="derecho/"><span>02 · Explorar</span><h1>DERECHO</h1></a></nav></section>
-<aside class="games" aria-label="Juegos"><h2>Para una pausa</h2><a href="juegos/sudoku/">Sudoku<span class="soon">jugar ahora</span></a><a href="juegos/deslizante/">Deslizante<span class="soon">jugar ahora</span></a><a href="juegos/dinosaurio/">Dinosaurio<span class="soon">jugar ahora</span></a></aside></main>
-<footer class="footer"><span>© Ninrold</span><span>Arquitectura · Derecho · Juegos</span></footer></div></body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Arquitectura y Derecho: espacios independientes de estudio y recursos."
+    />
+    <title>Ninrold</title>
+    <style>
+      :root {
+        --red: #d92525;
+        --ink: #111111;
+        --paper: #f6f1e8;
+        --paper-strong: #efe7dc;
+        --line: #d8d0c4;
+        --muted: #68645f;
+        --white: #fffdf9;
+        --shadow: rgba(17, 17, 17, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 0 18px;
+        margin-bottom: 32px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: clamp(1.6rem, 2vw, 2.2rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+      }
+
+      .mark {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        position: relative;
+        background: var(--red);
+        border-radius: 3px;
+      }
+
+      .mark::before,
+      .mark::after {
+        content: "";
+        position: absolute;
+        background: var(--white);
+      }
+
+      .mark::before {
+        width: 2px;
+        height: 12px;
+        left: 8px;
+        top: 3px;
+      }
+
+      .mark::after {
+        width: 12px;
+        height: 2px;
+        left: 3px;
+        top: 8px;
+      }
+
+      .tagline {
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+        white-space: nowrap;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 32px;
+        align-items: stretch;
+        margin-bottom: 44px;
+      }
+
+      .hero-copy {
+        padding: 26px 0 4px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: var(--red);
+        display: inline-block;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.8rem, 5vw, 5rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+      }
+
+      .lead {
+        max-width: 620px;
+        font-size: clamp(1.08rem, 1.8vw, 1.35rem);
+        color: var(--muted);
+        margin: 18px 0 28px;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        font-weight: 700;
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+      }
+
+      .button:hover,
+      .button:focus-visible {
+        transform: translateY(-1px);
+      }
+
+      .button.primary {
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .button.secondary {
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        padding-top: 16px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .meta strong {
+        color: var(--ink);
+        font-size: 1.1rem;
+      }
+
+      .hero-panel {
+        background: linear-gradient(180deg, var(--white), var(--paper-strong));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: 0 18px 40px var(--shadow);
+        padding: 26px 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .mini-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .mini-item {
+        padding: 14px 14px 12px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255,255,255,0.28);
+      }
+
+      .mini-item span {
+        display: block;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .mini-item strong {
+        font-size: 1.1rem;
+      }
+
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: rgba(255,255,255,0.32);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 24px 22px;
+        box-shadow: 0 8px 18px rgba(17, 17, 17, 0.02);
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: clamp(1.2rem, 2vw, 1.8rem);
+        letter-spacing: -0.04em;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .paths {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .path {
+        display: block;
+        position: relative;
+        min-height: 190px;
+        border-radius: 22px;
+        padding: 20px 18px 18px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .path:hover,
+      .path:focus-visible {
+        transform: translateY(-2px);
+        border-color: var(--red);
+        box-shadow: 0 14px 30px rgba(17, 17, 17, 0.06);
+      }
+
+      .path::before {
+        content: "";
+        position: absolute;
+        width: 38%;
+        aspect-ratio: 1;
+        background: rgba(217, 37, 37, 0.08);
+        border-radius: 50%;
+        right: -10%;
+        top: -18%;
+      }
+
+      .path .index {
+        display: inline-block;
+        position: relative;
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+
+      .path h3 {
+        position: relative;
+        margin: 0 0 10px;
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        letter-spacing: -0.05em;
+      }
+
+      .path p {
+        position: relative;
+        margin: 0;
+        color: var(--muted);
+        max-width: 18ch;
+      }
+
+      .path .label {
+        position: absolute;
+        right: 18px;
+        bottom: 16px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .game-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .game {
+        display: block;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px 16px;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+
+      .game:hover,
+      .game:focus-visible {
+        transform: translateY(-2px);
+        border-color: var(--red);
+      }
+
+      .game strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+
+      .game span {
+        color: var(--muted);
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--line);
+        margin-top: 42px;
+        padding-top: 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .tagline {
+          white-space: normal;
+        }
+
+        .hero,
+        .section-grid,
+        .paths,
+        .game-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .shell {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar" aria-label="Cabecera principal">
+        <a class="brand" href="/" aria-label="Inicio Ninrold">
+          <i class="mark" aria-hidden="true"></i>
+          <span>Ninrold</span>
+        </a>
+        <small class="tagline">Dos espacios de estudio independientes</small>
+      </header>
+
+      <main>
+        <section class="hero" aria-label="Portada principal">
+          <div class="hero-copy">
+            <div class="eyebrow">Estudio y exploración</div>
+            <h1>Arquitectura, derecho y curiosidad.</h1>
+            <p class="lead">
+              Explora dos territorios distintos: una colección en crecimiento de proyectos,
+              herramientas y materiales para aprender, pensar y construir.
+            </p>
+
+            <div class="cta-row">
+              <a class="button primary" href="arquitectura/">Explorar arquitectura</a>
+              <a class="button secondary" href="derecho/">Explorar derecho</a>
+            </div>
+
+            <div class="meta" aria-label="Datos del sitio">
+              <div><strong>02</strong> espacios</div>
+              <div><strong>∞</strong> materiales</div>
+              <div><strong>1</strong> ritmo propio</div>
+            </div>
+          </div>
+
+          <aside class="hero-panel" aria-label="Resumen de contenidos">
+            <div class="mini-list">
+              <div class="mini-item">
+                <span>Área</span>
+                <strong>Arquitectura</strong>
+              </div>
+              <div class="mini-item">
+                <span>Área</span>
+                <strong>Derecho</strong>
+              </div>
+              <div class="mini-item">
+                <span>Ritmo</span>
+                <strong>Aprendizaje continuo</strong>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="section-grid" aria-label="Selección de temáticas">
+          <article class="card">
+            <h2>Un sitio pensado como archivo vivo</h2>
+            <p>
+              Aquí conviven dos recorridos de estudio: uno más espacial, sobre arquitectura;
+              otro más normativo, sobre derecho. El propósito es mantener un cuaderno abierto,
+              útil y con identidad propia.
+            </p>
+          </article>
+
+          <article class="card">
+            <h2>Sin ruido. Con intención.</h2>
+            <p>
+              La idea no es acumular contenido por acumular; es diseñar un lugar claro,
+              legible y curioso para aprender con calma, revisar ideas y seguir construyendo.
+            </p>
+          </article>
+        </section>
+
+        <section aria-label="Explorar áreas principales">
+          <div class="paths">
+            <a class="path arquitectura" href="arquitectura/">
+              <span class="index">01</span>
+              <h3>Arquitectura</h3>
+              <p>Espacios, ideas, referencias y materiales para estudiar y pensar el proyecto.</p>
+              <span class="label">Explorar</span>
+            </a>
+
+            <a class="path law" href="derecho/">
+              <span class="index">02</span>
+              <h3>Derecho</h3>
+              <p>Recursos y temas para seguir entendiendo el marco normativo con rigor y claridad.</p>
+              <span class="label">Explorar</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top: 28px;" aria-label="Juegos y pausa">
+          <h2 style="margin-bottom: 16px;">Para una pausa</h2>
+          <div class="game-strip">
+            <a class="game" href="juegos/sudoku/">
+              <strong>Sudoku</strong>
+              <span>Jugar ahora</span>
+            </a>
+            <a class="game" href="juegos/deslizante/">
+              <strong>Deslizante</strong>
+              <span>Jugar ahora</span>
+            </a>
+            <a class="game" href="juegos/dinosaurio/">
+              <strong>Dinosaurio</strong>
+              <span>Jugar ahora</span>
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer" aria-label="Pie de página">
+        <span>© Ninrold</span>
+        <span>Arquitectura · Derecho · Juegos</span>
+      </footer>
+    </div>
+  </body>
+</html>
