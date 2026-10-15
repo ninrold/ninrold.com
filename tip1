@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto IV 2026</title>
+
+    <meta http-equiv="refresh"
+          content="0; url=https://drive.google.com/drive/folders/1LwmkVUumPTQZTU_sGGcmB0duQhZ8vsCS?usp=sharing">
+</head>
+
+<body>
+    <p>Redirigiendo...</p>
+
+    <script>
+        window.location.replace(
+            "https://drive.google.com/drive/folders/1LwmkVUumPTQZTU_sGGcmB0duQhZ8vsCS?usp=sharing"
+        );
+    </script>
+</body>
+</html>
