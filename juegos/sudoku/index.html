@@ -499,7 +499,6 @@ function newGame(){
   notesMode=false;
   document.getElementById("notesBadge").textContent="OFF";
   document.getElementById("notesBadge").classList.add("off");
-  document.getElementById("hint .badge")?.remove();
   const hintBtn=document.getElementById("hint");
   if(!hintBtn.querySelector(".badge")){
     const b=document.createElement("span");b.className="badge";b.textContent="3";hintBtn.appendChild(b);
